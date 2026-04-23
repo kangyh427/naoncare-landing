@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build / Temp
+node_modules/
+dist/
+build/
+*.log
+
+# 원본 풀네임 이미지 (리네임 후 실수 방지)
+menchu-old-man-1425733_1920.jpg
+*-unsplash.jpg

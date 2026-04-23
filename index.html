@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<!--
+================================================================
+나온케어 공식 랜딩 페이지
+================================================================
+경로: /index.html
+GitHub: https://github.com/kangyh427/naoncare-landing
+배포: https://kangyh427.github.io/naoncare-landing/
+제작: 2026년 4월 23일
+톤: Jones & Brown Legal 레퍼런스 + 다크 네이비 채택
+구조: 단일 HTML 파일, 외부 의존성 최소 (Google Fonts만)
+================================================================
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나온케어 | 먼저 말을 거는 돌봄</title>
+  <meta name="description" content="나온케어는 독거노인을 위한 AI 기반 선제형 감정 돌봄 서비스입니다. 호출 없이, 침묵을 이해하는 AI" />
+  <meta name="author" content="강윤혁, 주식회사 탈로스" />
+
+  <!-- Open Graph (공모전 심사위원이 링크 공유 시 노출) -->
+  <meta property="og:title" content="나온케어 | 먼저 말을 거는 돌봄" />
+  <meta property="og:description" content="호출 없이, 침묵을 이해하는 AI. 독거노인을 위한 선제형 감정 돌봄 서비스" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+
+  <!-- Google Fonts: Playfair Display(세리프 타이틀) + Noto Serif KR(한글 세리프) + Inter(본문 Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       [1] 디자인 토큰 (CSS 변수)
+       ------------------------------------------------------------
+       색상은 한 곳에서 관리. 나중에 브랜드명 바뀌어도 변수만 수정
+       ============================================================ */
+    :root {
+      /* 메인 팔레트 (B안: 다크 네이비 + 크림) */
+      --color-cream: #f4f0e8;           /* 크림 바탕 */
+      --color-cream-deep: #ebe5d7;      /* 크림 딥톤 */
+      --color-navy: #1a2840;            /* 다크 네이비 (주요 블록) */
+      --color-navy-deep: #0f1828;       /* 푸터용 더 짙은 네이비 */
+      --color-ink: #1a1a1a;             /* 본문 검정 */
+      --color-ink-soft: #3a3a3a;        /* 본문 소프트 */
+      --color-line: #c9c2b2;            /* 구분선 */
+      --color-mute: #8a8374;            /* 보조 텍스트 */
+      --color-white-soft: #f9f7f2;
+
+      /* 타이포 */
+      --font-serif-en: 'Playfair Display', 'Noto Serif KR', serif;
+      --font-serif-kr: 'Noto Serif KR', 'Playfair Display', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      /* 레이아웃 */
+      --content-max: 1200px;
+      --content-narrow: 820px;
+    }
+
+    /* ============================================================
+       [2] 리셋 및 공통
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--color-ink);
+      background: var(--color-cream);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* 로딩 최적화: 이미지 fade-in */
+    img {
+      opacity: 0;
+      transition: opacity 0.6s ease-in;
+    }
+    img.loaded,
+    img[data-loaded="true"] {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       [3] 상단 네비게이션 (심플)
+       ============================================================ */
+    .nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 28px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav__brand {
+      font-family: var(--font-serif-en);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--color-cream);
+    }
+
+    .nav__label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      opacity: 0.85;
+    }
+
+    /* ============================================================
+       [4] 섹션 1: 히어로
+       ------------------------------------------------------------
+       배경 이미지 + 다크 오버레이. 세리프 대형 타이틀.
+       ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      background-image: url('./images/hero.jpg');
+      background-size: cover;
+      background-position: center;
+      background-color: var(--color-navy);
+      display: flex;
+      align-items: flex-end;
+      color: var(--color-cream);
+    }
+
+    /* 다크 네이비 오버레이 (60%) */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(26, 40, 64, 0.55) 0%,
+        rgba(26, 40, 64, 0.65) 60%,
+        rgba(15, 24, 40, 0.85) 100%
+      );
+    }
+
+    .hero__inner {
+      position: relative;
+      z-index: 2;
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 40px 100px;
+    }
+
+    .hero__kicker {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      opacity: 0.85;
+    }
+
+    .hero__title {
+      font-family: var(--font-serif-kr);
+      font-weight: 500;
+      font-size: clamp(44px, 7vw, 96px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+      max-width: 900px;
+    }
+
+    .hero__sub {
+      font-family: var(--font-serif-kr);
+      font-weight: 400;
+      font-size: clamp(16px, 1.8vw, 22px);
+      line-height: 1.6;
+      max-width: 620px;
+      opacity: 0.92;
+    }
+
+    /* ============================================================
+       [5] 공통 섹션 레이아웃
+       ============================================================ */
+    .section {
+      padding: 120px 40px;
+    }
+
+    .section__inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+
+    .section__inner--narrow {
+      max-width: var(--content-narrow);
+    }
+
+    .section__label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--color-mute);
+      margin-bottom: 20px;
+    }
+
+    .section__title {
+      font-family: var(--font-serif-kr);
+      font-weight: 500;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin-bottom: 48px;
+      color: var(--color-ink);
+    }
+
+    .section__title--center {
+      text-align: center;
+    }
+
+    /* 본문 문단 */
+    .prose p {
+      font-family: var(--font-serif-kr);
+      font-size: 17px;
+      line-height: 1.85;
+      color: var(--color-ink-soft);
+      margin-bottom: 24px;
+    }
+
+    .prose p:last-child {
+      margin-bottom: 0;
+    }
+
+    .prose strong {
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    /* ============================================================
+       [6] 섹션 2: 서비스 소개 (크림 바탕)
+       ============================================================ */
+    .intro {
+      background: var(--color-cream);
+    }
+
+    .intro__grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .intro__heading {
+      font-family: var(--font-serif-kr);
+      font-weight: 500;
+      font-size: clamp(26px, 3vw, 36px);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    /* ============================================================
+       [7] 섹션 3: 다크 블록 (다크 네이비)
+       ------------------------------------------------------------
+       "우리가 다루는 일" — 서비스 핵심 기능을 세로 리스트로
+       ============================================================ */
+    .offer {
+      background: var(--color-navy);
+      color: var(--color-cream);
+      padding: 140px 40px;
+    }
+
+    .offer__label {
+      color: var(--color-cream);
+      opacity: 0.7;
+    }
+
+    .offer__title {
+      color: var(--color-cream);
+      margin-bottom: 64px;
+    }
+
+    .offer__list {
+      list-style: none;
+      border-top: 1px solid rgba(244, 240, 232, 0.18);
+    }
+
+    .offer__item {
+      border-bottom: 1px solid rgba(244, 240, 232, 0.18);
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 24px;
+      align-items: baseline;
+    }
+
+    .offer__num {
+      font-family: var(--font-serif-en);
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.55;
+      letter-spacing: 1px;
+    }
+
+    .offer__text {
+      font-family: var(--font-serif-kr);
+      font-size: clamp(20px, 2.2vw, 28px);
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .offer__cta {
+      margin-top: 72px;
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--color-cream);
+      border: 1px solid rgba(244, 240, 232, 0.5);
+      padding: 16px 40px;
+      transition: all 0.3s ease;
+    }
+
+    .offer__cta:hover {
+      background: var(--color-cream);
+      color: var(--color-navy);
+    }
+
+    /* ============================================================
+       [8] 섹션 4: 전폭 사진 블록
+       ============================================================ */
+    .fullphoto {
+      width: 100%;
+      height: clamp(360px, 70vh, 680px);
+      background-size: cover;
+      background-position: center;
+      background-color: var(--color-cream-deep);
+    }
+
+    .fullphoto--city {
+      background-image: url('./images/city.jpg');
+    }
+
+    .fullphoto--closing {
+      background-image: url('./images/closing.jpg');
+    }
+
+    /* ============================================================
+       [9] 섹션 5: 기술과 특허 (2단 그리드)
+       ============================================================ */
+    .tech {
+      background: var(--color-cream);
+    }
+
+    .tech__grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .tech__text h3 {
+      font-family: var(--font-serif-kr);
+      font-weight: 500;
+      font-size: clamp(24px, 2.6vw, 32px);
+      line-height: 1.35;
+      margin-bottom: 28px;
+    }
+
+    .patent-box {
+      background: var(--color-white-soft);
+      border: 1px solid var(--color-line);
+      padding: 40px;
+    }
+
+    .patent-box__label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--color-mute);
+      margin-bottom: 24px;
+    }
+
+    .patent-box__title {
+      font-family: var(--font-serif-kr);
+      font-weight: 500;
+      font-size: 22px;
+      line-height: 1.4;
+      margin-bottom: 28px;
+    }
+
+    .patent-box__list {
+      list-style: none;
+    }
+
+    .patent-box__list li {
+      padding: 14px 0;
+      border-top: 1px solid var(--color-line);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.6;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 12px;
+      color: var(--color-ink-soft);
+    }
+
+    .patent-box__list li:last-child {
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .patent-box__list dt {
+      color: var(--color-mute);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       [10] 섹션 6: 개발 현황 (담담한 상태 표시)
+       ============================================================ */
+    .status {
+      background: var(--color-cream-deep);
+      padding: 100px 40px;
+      text-align: center;
+    }
+
+    .status__label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--color-mute);
+      margin-bottom: 24px;
+    }
+
+    .status__phrase {
+      font-family: var(--font-serif-kr);
+      font-size: clamp(22px, 2.6vw, 32px);
+      font-weight: 500;
+      line-height: 1.5;
+      max-width: 760px;
+      margin: 0 auto 16px;
+    }
+
+    .status__detail {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--color-mute);
+      letter-spacing: 0.5px;
+    }
+
+    /* ============================================================
+       [11] 푸터
+       ============================================================ */
+    .footer {
+      background: var(--color-navy-deep);
+      color: var(--color-cream);
+      padding: 80px 40px 40px;
+    }
+
+    .footer__inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+
+    .footer__top {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid rgba(244, 240, 232, 0.15);
+    }
+
+    .footer__brand-name {
+      font-family: var(--font-serif-en);
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .footer__tagline {
+      font-family: var(--font-serif-kr);
+      font-size: 14px;
+      line-height: 1.7;
+      opacity: 0.75;
+    }
+
+    .footer__col h4 {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 20px;
+    }
+
+    .footer__col p,
+    .footer__col a {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--color-cream);
+      opacity: 0.88;
+    }
+
+    .footer__col a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .footer__bottom {
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      opacity: 0.55;
+      letter-spacing: 0.5px;
+    }
+
+    /* ============================================================
+       [12] 반응형 (모바일 · 태블릿)
+       ============================================================ */
+    @media (max-width: 900px) {
+      .section,
+      .offer {
+        padding: 80px 24px;
+      }
+
+      .nav {
+        padding: 20px 24px;
+      }
+
+      .hero__inner {
+        padding: 0 24px 60px;
+      }
+
+      .intro__grid,
+      .tech__grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .footer {
+        padding: 60px 24px 32px;
+      }
+
+      .footer__top {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding-bottom: 40px;
+      }
+
+      .offer__item {
+        grid-template-columns: 50px 1fr;
+        padding: 22px 0;
+      }
+
+      .patent-box {
+        padding: 28px;
+      }
+
+      .patent-box__list li {
+        grid-template-columns: 80px 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .hero__kicker,
+      .section__label,
+      .offer__label {
+        letter-spacing: 2px;
+      }
+
+      .hero__title {
+        font-size: 40px;
+      }
+
+      .section__title {
+        margin-bottom: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ====================================================
+       [섹션 1] 히어로
+       ==================================================== -->
+  <header class="hero" role="banner">
+    <nav class="nav" aria-label="주 메뉴">
+      <div class="nav__brand">Naon Care</div>
+      <div class="nav__label">Phase C · 2026</div>
+    </nav>
+
+    <div class="hero__inner">
+      <p class="hero__kicker">For Those Who Live Alone</p>
+      <h1 class="hero__title">먼저 말을 거는 돌봄</h1>
+      <p class="hero__sub">호출 없이, 침묵을 이해하는 AI<br />나온케어는 조용한 시간 속에서 먼저 안부를 건넵니다.</p>
+    </div>
+  </header>
+
+  <!-- ====================================================
+       [섹션 2] 서비스 소개
+       ==================================================== -->
+  <section class="section intro" aria-labelledby="intro-title">
+    <div class="section__inner">
+      <div class="intro__grid">
+        <div>
+          <p class="section__label">Introduction</p>
+          <h2 class="intro__heading" id="intro-title">서비스 소개</h2>
+        </div>
+        <div class="prose">
+          <p>한국에서 혼자 사시는 어르신은 229만 명에 이릅니다. 하루 평균 약 10분이 홀로 세상을 떠나고, 그중 상당수는 며칠이 지난 뒤에야 발견됩니다. 이것은 복지의 공백이 아니라, 하루 속 대화의 공백에서 비롯된 문제입니다.</p>
+          <p>기존의 돌봄 기기와 AI 스피커는 어르신이 먼저 부르기를 기다립니다. 나온케어는 반대 방향에서 접근합니다. 조용한 시간이 길어지면 AI가 먼저 안부를 건네고, 짧은 대화 속에서 어르신의 감정과 컨디션을 읽어냅니다.</p>
+          <p>저희는 기술이 사람을 대체하기를 바라지 않습니다. 다만, 보호자가 늘 곁에 있을 수 없는 시간 속에서, 어르신이 혼자가 아니라고 느낄 수 있는 작은 목소리 하나를 곁에 두는 일. 나온케어가 하는 일은 그만큼 단순합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       [섹션 3] 다크 블록 — 우리가 다루는 일
+       ==================================================== -->
+  <section class="offer" aria-labelledby="offer-title">
+    <div class="section__inner">
+      <p class="section__label offer__label">What We Offer</p>
+      <h2 class="section__title offer__title" id="offer-title">우리가 다루는 일</h2>
+
+      <ul class="offer__list">
+        <li class="offer__item">
+          <span class="offer__num">01</span>
+          <span class="offer__text">생활 환경음 분석</span>
+        </li>
+        <li class="offer__item">
+          <span class="offer__num">02</span>
+          <span class="offer__text">선제 대화 시작</span>
+        </li>
+        <li class="offer__item">
+          <span class="offer__num">03</span>
+          <span class="offer__text">온디바이스 프라이버시 보호</span>
+        </li>
+        <li class="offer__item">
+          <span class="offer__num">04</span>
+          <span class="offer__text">감정 기록 및 추세 관찰</span>
+        </li>
+        <li class="offer__item">
+          <span class="offer__num">05</span>
+          <span class="offer__text">인지 저하 조기 징후 감지</span>
+        </li>
+        <li class="offer__item">
+          <span class="offer__num">06</span>
+          <span class="offer__text">보호자 대시보드 제공</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       [섹션 4] 전폭 사진 — 시각적 쉼표
+       ==================================================== -->
+  <div class="fullphoto fullphoto--city" role="img" aria-label="도시 속 홀로 앉은 노인"></div>
+
+  <!-- ====================================================
+       [섹션 5] 기술과 특허
+       ==================================================== -->
+  <section class="section tech" aria-labelledby="tech-title">
+    <div class="section__inner">
+      <p class="section__label">Technology &amp; IP</p>
+      <h2 class="section__title" id="tech-title">기술과 특허</h2>
+
+      <div class="tech__grid">
+        <div class="tech__text prose">
+          <h3>음성은 기기 안에서만 처리됩니다.</h3>
+          <p>어르신의 음성 원본은 기기 내부에서 수 초 이내에 폐기되며, 외부 서버로는 비식별화된 텍스트 요약과 감정 지표만 암호화되어 전송됩니다. 이는 나온케어가 돌봄 서비스를 하면서도, 어르신의 일상과 사생활을 동시에 지키는 방식입니다.</p>
+          <p>선제 대화 기술은 단순한 스케줄 발화가 아닙니다. 환경음과 침묵의 패턴, 과거 대화의 맥락을 종합해, 필요한 순간에만 개입하도록 설계되었습니다. 이 방식은 국내 특허로 출원되어 현재 특허청의 심사를 받고 있습니다.</p>
+        </div>
+
+        <aside class="patent-box" aria-label="특허 출원 정보">
+          <p class="patent-box__label">Patent Pending</p>
+          <p class="patent-box__title">선제 대화 기반의<br />감정 기록 시스템</p>
+          <dl class="patent-box__list">
+            <li><dt>출원번호</dt><dd>10-2025-0185553</dd></li>
+            <li><dt>출원일</dt><dd>2025년 11월 28일</dd></li>
+            <li><dt>상태</dt><dd>심사 청구 완료 · 심사 대기</dd></li>
+            <li><dt>출원인</dt><dd>강윤혁</dd></li>
+          </dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       [섹션 6] 개발 현황
+       ==================================================== -->
+  <section class="status" aria-label="개발 진행 현황">
+    <p class="status__label">Development Status</p>
+    <p class="status__phrase">Phase B 완료. Phase C 진행 중</p>
+    <p class="status__detail">안드로이드 네이티브 앱 · 온디바이스 음성 처리 · 감정 분석 엔진 통합</p>
+  </section>
+
+  <!-- ====================================================
+       [섹션 7] 클로징 사진 — 여운
+       ==================================================== -->
+  <div class="fullphoto fullphoto--closing" role="img" aria-label="바다를 바라보는 노부부"></div>
+
+  <!-- ====================================================
+       [섹션 8] 푸터
+       ==================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+
+      <div class="footer__top">
+        <div class="footer__col">
+          <p class="footer__brand-name">Naon Care</p>
+          <p class="footer__tagline">먼저 말을 거는 돌봄<br />호출 없이, 침묵을 이해하는 AI</p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Company</h4>
+          <p>주식회사 탈로스</p>
+          <p>대표자 · 강윤혁</p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Contact</h4>
+          <p><a href="mailto:kangyh427@naver.com">kangyh427@naver.com</a></p>
+          <p>세종특별자치시 마음안1로 155, 301호</p>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>© 2026 Naon Care. All rights reserved.</span>
+        <span>Patent Pending · 10-2025-0185553</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ====================================================
+       [스크립트] 이미지 fade-in 및 배경 preload
+       ----------------------------------------------------
+       인라인 최소 스크립트. 외부 JS 파일 없음.
+       이미지 로드 완료 후 자연스럽게 나타나도록 처리.
+       ==================================================== -->
+  <script>
+    // 이미지 태그 fade-in
+    document.querySelectorAll('img').forEach(function (img) {
+      if (img.complete) {
+        img.setAttribute('data-loaded', 'true');
+      } else {
+        img.addEventListener('load', function () {
+          img.setAttribute('data-loaded', 'true');
+        });
+      }
+    });
+
+    // 배경 이미지 preload (히어로 + 전폭 사진)
+    // 네트워크가 느린 환경에서 배경이 늦게 뜨는 문제를 완화
+    var bgImages = ['./images/hero.jpg', './images/city.jpg', './images/closing.jpg'];
+    bgImages.forEach(function (src) {
+      var preload = new Image();
+      preload.src = src;
+    });
+  </script>
+
+</body>
+</html>
